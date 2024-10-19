@@ -1,16 +1,16 @@
 package collection
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 )
 
 type StackErr struct {
 	stackErr error
-	err      error
 
 	// opt using http status code
-	code int64
+	httpCode int
 }
 
 func (s *StackErr) Error() string {
@@ -18,14 +18,27 @@ func (s *StackErr) Error() string {
 }
 
 func (s *StackErr) Unwrap() error {
-	return s.err
+	currentErr := s.stackErr
+	var lastErr error
+	for {
+		currentErr = errors.Unwrap(currentErr)
+		if currentErr == nil {
+			return lastErr
+		}
+
+		lastErr = currentErr
+	}
+}
+
+func (s *StackErr) GetHttpCode() int {
+	return s.httpCode
 }
 
 type Option func(s *StackErr)
 
-func SetHttpCode(code int64) Option {
+func SetHttpCode(code int) Option {
 	return func(s *StackErr) {
-		s.code = code
+		s.httpCode = code
 	}
 }
 
@@ -36,7 +49,6 @@ func Err(err error, opts ...Option) *StackErr {
 	frame, _ := frames.Next()
 	s := &StackErr{
 		stackErr: fmt.Errorf("%s:%d: %w", frame.Function, frame.Line, err),
-		err:      err,
 	}
 	for _, opt := range opts {
 		opt(s)
