@@ -1,7 +1,7 @@
 ## Installation
 To install `go-collection`, use the following Go command:
 ```shell
-go get github.com/SyaibanAhmadRamadhan/go-collection@v1.241019.2159
+go get github.com/SyaibanAhmadRamadhan/go-collection@v1.241019.2215
 ```
 
 ## Tag Versioning Example: `v1.231215.2307`
