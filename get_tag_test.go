@@ -40,5 +40,17 @@ type ProductItemVariant struct {
 func TestGetTags(t *testing.T) {
 	product := ProductItem{}
 	tags := collection.GetTags(product, "db", "id")
-	fmt.Println(tags) // O
+	fmt.Println(tags)
+}
+
+func TestGetTagsWithValues(t *testing.T) {
+	product := ProductItem{
+		Variant1: &ProductItemVariant{
+			Name:  "rama",
+			Value: "rama",
+		},
+	}
+	tags, values := collection.GetTagsWithValues(product, "db", "id")
+	fmt.Println(tags)
+	fmt.Println(values)
 }
